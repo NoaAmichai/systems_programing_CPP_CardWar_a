@@ -22,7 +22,7 @@ namespace ariel {
 
         std::string getName();
 
-        void addCardToStack(Card &card);
+        void addCardToStack(Card card);
     };
 }
 #endif

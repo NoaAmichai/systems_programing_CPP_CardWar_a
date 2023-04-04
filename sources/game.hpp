@@ -11,6 +11,7 @@ namespace ariel {
     private:
         Player player1;
         Player player2;
+        std::vector<Card> deck;
 
     public:
         Game(Player &p1, Player &p2);
