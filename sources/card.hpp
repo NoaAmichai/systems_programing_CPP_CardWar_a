@@ -5,16 +5,28 @@
 #include <string>
 
 namespace ariel {
+    enum class RoundResult {
+        Win,
+        Loss,
+        Tie
+    };
+
     class Card {
-        int number;  //{"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
+        int number{};  //{"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
         std::string shape; //{"Hearts", "Diamonds", "Clubs", "Spades"}
 
     public:
-        Card(int card_number, const std::string& card_shape);
+        Card();
+
+        Card(int card_number, const std::string &card_shape);
 
         std::string getShape();
 
         int getNumber() const;
+
+        RoundResult winRound(const Card &other);
+
+        std::string toString();
 
     };
 }

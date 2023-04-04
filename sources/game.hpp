@@ -27,6 +27,8 @@ namespace ariel {
         void printLog();
 
         void printStats();
+
+        void cleanTables();
     };
 }
 

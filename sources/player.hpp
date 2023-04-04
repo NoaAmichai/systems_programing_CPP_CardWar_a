@@ -11,9 +11,11 @@ namespace ariel {
     class Player {
         std::string name;
         std::vector<Card> stack;
-        int cardsTaken;
+        std::vector<Card> cardsOnTable;
 
     public:
+        int cardsTaken;
+
         Player(const std::string &playerName);
 
         int stacksize();
@@ -23,6 +25,10 @@ namespace ariel {
         std::string getName();
 
         void addCardToStack(Card card);
+
+        Card getCardOnTable();
+
+        void removeAllCardsFromTable();
     };
 }
 #endif
