@@ -4,16 +4,19 @@
 #include <iostream>
 #include <string>
 
-class Card {
-    int number;
-    std::string shape;
+namespace ariel {
+    class Card {
+        int number;  //{"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
+        std::string shape; //{"Hearts", "Diamonds", "Clubs", "Spades"}
 
-public:
-    Card(int card_number, std::string card_shape) : number(card_number), shape(card_shape) {}
+    public:
+        Card(int card_number, const std::string& card_shape);
 
-    std::string getShape() { return shape; }
+        std::string getShape();
 
-};
+        int getNumber() const;
 
+    };
+}
 
 #endif

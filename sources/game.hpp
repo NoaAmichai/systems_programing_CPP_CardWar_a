@@ -4,28 +4,29 @@
 #include <string>
 #include "player.hpp"
 
-using namespace ariel;
 
-class Game {
+namespace ariel {
+    class Game {
 
-private:
-    Player player1;
-    Player player2;
+    private:
+        Player player1;
+        Player player2;
 
-public:
-    Game(const Player &p1, const Player &p2) : player1(p1), player2(p2) {}
+    public:
+        Game(Player &p1, Player &p2);
 
-    void playTurn() {}
+        void playTurn();
 
-    void printLastTurn() {}
+        void printLastTurn();
 
-    void playAll() {}
+        void playAll();
 
-    void printWiner() {}
+        void printWiner();
 
-    void printLog() {}
+        void printLog();
 
-    void printStats() {}
-};
+        void printStats();
+    };
+}
 
 #endif
