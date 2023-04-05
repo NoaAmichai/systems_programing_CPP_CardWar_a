@@ -12,6 +12,8 @@ namespace ariel {
         Player player1;
         Player player2;
         std::vector<Card> deck;
+        std::string winner;
+        std::vector<std::string> turnsLog;
 
     public:
         Game(Player &p1, Player &p2);
