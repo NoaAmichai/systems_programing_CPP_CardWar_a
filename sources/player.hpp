@@ -12,27 +12,28 @@ namespace ariel {
         std::string name;
         std::vector<Card> stack;
         std::vector<Card> cardsOnTable;
+        int numCardsWon;
 
     public:
-        int cardsTaken;
-
         Player(const std::string &playerName);
 
-        int stacksize();
+        int stacksize() const;
 
-        int cardesTaken();
+        int cardesTaken() const;
 
-        std::string getName();
+        std::string getName() const;
 
-        void addCardToStack(Card card);
+        void addCardToStack(const Card &card);
 
         Card getCardOnTable();
 
-        int cardsOnTableCount();
+        int cardsOnTableCount() const;
 
         void removeAllCardsFromTable();
 
         void clearPreviousGames();
+
+        void addNumCardsWon(int, int);
     };
 }
 #endif

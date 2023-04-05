@@ -9,14 +9,14 @@ namespace ariel {
     class Game {
 
     private:
-        Player player1;
-        Player player2;
+        Player &player1;
+        Player &player2;
         std::vector<Card> deck;
         std::string winner;
         std::vector<std::string> turnsLog;
 
     public:
-        Game(Player &p1, Player &p2);
+        Game(Player &firstPlayer, Player &secondPlayer);
 
         void playTurn();
 

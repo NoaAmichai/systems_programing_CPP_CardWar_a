@@ -4,19 +4,23 @@
 using namespace std;
 using namespace ariel;
 
-Player::Player(const std::string &playerName) : name(playerName), cardsTaken(0), stack{}, cardsOnTable{} {
-    if (playerName.empty()) { //also need to check the playerName isn't null
-        throw std::invalid_argument("Invalid player name");
+Player::Player(const string &playerName) : name(playerName), numCardsWon(0), stack{}, cardsOnTable{} {
+    //also need to check the playerName isn't null
+    if (playerName.empty()) {
+        throw invalid_argument("Invalid player name");
     }
 }
 
-int Player::stacksize() { return stack.size(); }
+int Player::stacksize() const { return stack.size(); }
 
-int Player::cardesTaken() { return cardsTaken; }
+int Player::cardesTaken() const { return numCardsWon; }
 
-string Player::getName() { return this->name; }
+string Player::getName() const { return name; }
 
-void Player::addCardToStack(Card card) {
+void Player::addCardToStack(const Card &card) {
+    if (stack.size() > 26) {
+        throw out_of_range("Player's stack is full");
+    }
     stack.emplace_back(card);
 }
 
@@ -25,23 +29,27 @@ Card Player::getCardOnTable() {
         throw out_of_range("Player's stack is empty");
     }
     Card topCard = stack.back();
-    this->cardsOnTable.emplace_back(topCard);
+    cardsOnTable.emplace_back(topCard);
     stack.pop_back();
     return topCard;
 }
 
 void Player::removeAllCardsFromTable() {
-    this->cardsOnTable.clear();
+    cardsOnTable.clear();
 }
 
-int Player::cardsOnTableCount() {
-    return this->cardsOnTable.size();
+int Player::cardsOnTableCount() const{
+    return cardsOnTable.size();
+}
+
+void Player::addNumCardsWon(int player1_cards, int player2_cards) {
+    numCardsWon += player1_cards + player2_cards;
 }
 
 void Player::clearPreviousGames() {
-    this->stack.clear();
-    this->cardsOnTable.clear();
-    this->cardsTaken = 0;
+    stack.clear();
+    cardsOnTable.clear();
+    numCardsWon = 0;
 }
 
 

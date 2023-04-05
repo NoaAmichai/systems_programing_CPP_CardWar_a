@@ -12,7 +12,7 @@ namespace ariel {
     };
 
     class Card {
-        int number{};  //{"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
+        int number;  //{"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
         std::string shape; //{"Hearts", "Diamonds", "Clubs", "Spades"}
 
     public:
@@ -20,13 +20,13 @@ namespace ariel {
 
         Card(int card_number, const std::string &card_shape);
 
-        std::string getShape();
+        std::string getShape() const;
 
         int getNumber() const;
 
-        RoundResult winRound(const Card &other);
+        RoundResult winRound(const Card &other) const;
 
-        std::string toString();
+        std::string toString() const;
 
     };
 }
