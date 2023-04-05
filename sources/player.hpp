@@ -28,7 +28,11 @@ namespace ariel {
 
         Card getCardOnTable();
 
+        int cardsOnTableCount();
+
         void removeAllCardsFromTable();
+
+        void clearPreviousGames();
     };
 }
 #endif

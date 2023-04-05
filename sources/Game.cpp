@@ -12,7 +12,9 @@ using namespace ariel;
 static set<string> VALID_SHAPES{"Hearts", "Diamonds", "Clubs", "Spades"};
 static set<int> VALID_NUMBERS{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 
-Game::Game(Player &p1, Player &p2) : player1(p1), player2(p2), deck({}), winner(""), turnsLog({}) {
+Game::Game(Player &p1, Player &p2) : player1(p1), player2(p2), deck({}), winner(), turnsLog({}) {
+    p1.clearPreviousGames();
+    p2.clearPreviousGames();
     for (const string &shape: VALID_SHAPES) {
         for (int number: VALID_NUMBERS) {
             deck.emplace_back(number, shape);
@@ -34,7 +36,10 @@ Game::Game(Player &p1, Player &p2) : player1(p1), player2(p2), deck({}), winner(
     deck.clear(); // clear the deck after dealing the cards
 }
 
-void Game::playTurn() {
+void Game::playTurn() { //TODO problem with the player's stacks
+    if (&player1 == &player2) throw invalid_argument("Same player");
+    if (player1.getName() == player2.getName()) throw invalid_argument("Players must have different names.");
+
     Card p1_card, p2_card;
     string turn;
     do {
@@ -43,16 +48,16 @@ void Game::playTurn() {
         turn = player1.getName() + " played " + p1_card.toString() + " " + player2.getName() + " played " +
                p2_card.toString() + ". ";
         if (p1_card.winRound(p2_card) == RoundResult::Win) {
-            player1.cardsTaken++;
+            player1.cardsTaken = player1.cardsOnTableCount() + player2.cardsOnTableCount();
             cleanTables();
             turn += player1.getName() + " wins.";
             return;
         } else if (p1_card.winRound(p2_card) == RoundResult::Loss) {
-            player2.cardsTaken++;
+            player2.cardsTaken = player1.cardsOnTableCount() + player2.cardsOnTableCount();
             cleanTables();
             turn += player2.getName() + " wins.";
             return;
-        }
+        } else turn += "Draw.";
     } while (p1_card.winRound(p2_card) == RoundResult::Tie);
     turnsLog.push_back(turn);
 }
@@ -103,8 +108,8 @@ int main() {
     Player a("Alice");
     Player b("Bob");
     Game game(a, b);
-
     game.playTurn();
+    game.printLastTurn();
 }
 
 

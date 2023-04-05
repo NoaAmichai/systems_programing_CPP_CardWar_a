@@ -34,6 +34,18 @@ void Player::removeAllCardsFromTable() {
     this->cardsOnTable.clear();
 }
 
+int Player::cardsOnTableCount() {
+    return this->cardsOnTable.size();
+}
+
+void Player::clearPreviousGames() {
+    this->stack.clear();
+    this->cardsOnTable.clear();
+    this->cardsTaken = 0;
+}
+
+
+
 
 
 
