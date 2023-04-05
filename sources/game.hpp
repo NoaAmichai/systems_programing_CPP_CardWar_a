@@ -14,6 +14,7 @@ namespace ariel {
         std::vector<Card> deck;
         std::string winner;
         std::vector<std::string> turnsLog;
+        int numberOfRounds;
 
     public:
         Game(Player &firstPlayer, Player &secondPlayer);

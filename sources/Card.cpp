@@ -24,17 +24,22 @@ string Card::getShape() const {
     return this->shape;
 }
 
-RoundResult Card::winRound(const Card &other) const { //TODO fix
+RoundResult Card::winRound(const Card &other) const {
     if (this->getNumber() == other.getNumber()) {
         return RoundResult::Tie;
-    } else if (this->getNumber() == 1 && other.getNumber() != 2) {
-        return RoundResult::Win;
-    } else if (this->getNumber() > other.getNumber()) {
+    } else if (this->getNumber() == 1) {
+        if (other.getNumber() == 2) {
+            return RoundResult::Loss;
+        } else {
+            return RoundResult::Win;
+        }
+    } else if ((this->getNumber() == 2 && other.getNumber() == 1) || (this->getNumber() > other.getNumber() && other.getNumber() != 1)) {
         return RoundResult::Win;
     } else {
         return RoundResult::Loss;
     }
 }
+
 
 string Card::toString() const {
     if (this->getNumber() == 1) return "Ace of " + this->getShape();

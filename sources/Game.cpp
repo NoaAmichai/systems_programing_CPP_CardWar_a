@@ -13,7 +13,7 @@ static const set<string> CARD_SHAPES{"Hearts", "Diamonds", "Clubs", "Spades"};
 static const set<int> CARD_NUMBERS{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 
 Game::Game(Player &firstPlayer, Player &secondPlayer) : player1(firstPlayer), player2(secondPlayer), deck({}), winner(),
-                                                        turnsLog({}) {
+                                                        turnsLog({}), numberOfRounds(0) {
     firstPlayer.clearPreviousGames();
     secondPlayer.clearPreviousGames();
     for (const string &shape: CARD_SHAPES) {
@@ -37,9 +37,10 @@ Game::Game(Player &firstPlayer, Player &secondPlayer) : player1(firstPlayer), pl
     deck.clear(); // clear the deck after dealing the cards
 }
 
-void Game::playTurn() { //TODO problem with the player's stacks
+void Game::playTurn() {
     if (&player1 == &player2) throw invalid_argument("Same player");
     if (player1.getName() == player2.getName()) throw invalid_argument("Players must have different names.");
+    if (player1.cardesTaken() + player2.cardesTaken() == 52) throw out_of_range("The game has already finished");
 
     Card p1_card, p2_card;
     string turn;
@@ -52,11 +53,18 @@ void Game::playTurn() { //TODO problem with the player's stacks
             player1.addNumCardsWon(player1.cardsOnTableCount(), player2.cardsOnTableCount());
             cleanTables();
             turn += player1.getName() + " wins.";
+            numberOfRounds++;
         } else if (p1_card.winRound(p2_card) == RoundResult::Loss) {
             player2.addNumCardsWon(player1.cardsOnTableCount(), player2.cardsOnTableCount());
             cleanTables();
             turn += player2.getName() + " wins.";
-        } else turn += "Draw.";
+            numberOfRounds++;
+        } else { // tie
+            turn += "Draw.";
+            // draw another card from each player's
+            player1.getCardOnTable();
+            player2.getCardOnTable();
+        }
     } while (p1_card.winRound(p2_card) == RoundResult::Tie);
     turnsLog.emplace_back(turn);
 }
@@ -70,14 +78,35 @@ void Game::printLastTurn() {
 }
 
 void Game::playAll() {
-    while (player1.stacksize() != 0 && player2.stacksize() != 0) {
+    if (!winner.empty()) {
+        throw runtime_error("The game has already finished");
+    }
+
+    while ((player1.stacksize() != 0 && player2.stacksize() != 0) &&
+           (player1.cardesTaken() + player2.cardesTaken() < 52)) {
         playTurn();
     }
-    //check how is the winner
-    if (player1.cardesTaken() > player2.cardesTaken()) winner = player1.getName();
-    else if (player1.cardesTaken() < player2.cardesTaken()) winner = player2.getName();
-    else winner = "Tie"; //TODO change
+
+    bool isGameFinished = false;
+    while (!isGameFinished) {
+        try {
+            playTurn();
+        } catch (out_of_range &e) {
+            // the players has run out of cards
+            isGameFinished = true;
+        }
+    }
+
+    // Determine the winner
+    if (player1.cardesTaken() > player2.cardesTaken()) {
+        winner = player1.getName();
+    } else if (player1.cardesTaken() < player2.cardesTaken()) {
+        winner = player2.getName();
+    } else {
+        throw runtime_error("The game ended in a tie");
+    }
 }
+
 
 void Game::printWiner() {
     if (winner.empty()) {
@@ -106,7 +135,7 @@ int main() {
     Player p1("Noa");
     Player p2("Boaz");
     Game game(p1, p2);
-    for (int i = 0; i <= 5; i++) {
+    for (int i = 0; i <= 23; i++) {
         game.playTurn();
         game.printLastTurn();
     }
