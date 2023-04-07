@@ -49,15 +49,12 @@ Game::Game(Player &firstPlayer, Player &secondPlayer) : player1(firstPlayer), pl
 }
 
 void Game::playTurn() {
-    // Check if the game is valid to play a turn
 
+    // Check if the game is valid to play a turn
     if (&player1 == &player2) throw invalid_argument("Same player");
     if (player1.getName() == player2.getName()) throw invalid_argument("Players must have different names.");
     if (player1.stacksize() == 0 && player2.stacksize() == 0) throw runtime_error("The game is already over.");
-    if (gameIsOver()) {
-        cout << "The winner is: " << winner << endl;
-        return;
-    }
+    if (gameIsOver()) return;
 
     Card p1_card = player1.getCardOnTable();
     Card p2_card = player2.getCardOnTable();
