@@ -4,11 +4,16 @@
 using namespace std;
 using namespace ariel;
 
-Player::Player(const string &playerName) : name(playerName), numCardsWon(0), stack{}, cardsOnTable{} {
+Player::Player(const string &playerName) : name(playerName), numCardsWon(0), stack{}, cardsOnTable{},
+                                           currentlyPlaying(false){
     //also need to check the playerName isn't null
     if (playerName.empty()) {
         throw invalid_argument("Invalid player name");
     }
+}
+
+void Player::setCurrentlyPlaying(bool playing) {
+    currentlyPlaying = playing;
 }
 
 int Player::stacksize() const { return stack.size(); }
@@ -38,7 +43,7 @@ void Player::removeAllCardsFromTable() {
     cardsOnTable.clear();
 }
 
-int Player::cardsOnTableCount() const{
+int Player::cardsOnTableCount() const {
     return cardsOnTable.size();
 }
 
@@ -50,6 +55,10 @@ void Player::clearPreviousGames() {
     stack.clear();
     cardsOnTable.clear();
     numCardsWon = 0;
+}
+
+bool Player::isCurrentlyPlaying() const {
+    return currentlyPlaying;
 }
 
 

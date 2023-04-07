@@ -13,9 +13,14 @@ static const set<string> CARD_SHAPES{"Hearts", "Diamonds", "Clubs", "Spades"};
 static const set<int> CARD_NUMBERS{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 
 Game::Game(Player &firstPlayer, Player &secondPlayer) : player1(firstPlayer), player2(secondPlayer), deck({}), winner(),
-                                                        turnsLog({}), numberOfRounds(0) {
+                                                        turnsLog({}), countRounds(0), countDraws(0), wins(2, 0) {
+    if (firstPlayer.isCurrentlyPlaying() || secondPlayer.isCurrentlyPlaying())
+        throw runtime_error("One of the players (or both) are currently playing in other game");
     firstPlayer.clearPreviousGames();
     secondPlayer.clearPreviousGames();
+    firstPlayer.setCurrentlyPlaying(true);
+    secondPlayer.setCurrentlyPlaying(true);
+
     for (const string &shape: CARD_SHAPES) {
         for (const int number: CARD_NUMBERS) {
             deck.emplace_back(number, shape);
@@ -40,34 +45,56 @@ Game::Game(Player &firstPlayer, Player &secondPlayer) : player1(firstPlayer), pl
 void Game::playTurn() {
     if (&player1 == &player2) throw invalid_argument("Same player");
     if (player1.getName() == player2.getName()) throw invalid_argument("Players must have different names.");
-    if (player1.cardesTaken() + player2.cardesTaken() == 52) throw out_of_range("The game has already finished");
-
-    Card p1_card, p2_card;
+    if (gameIsOver()) { cout << "The winner is: " << winner << endl; };
+    Card p1_card = player1.getCardOnTable();
+    Card p2_card = player2.getCardOnTable();
     string turn;
-    do {
-        p1_card = player1.getCardOnTable();
-        p2_card = player2.getCardOnTable();
-        turn = player1.getName() + " played " + p1_card.toString() + " " + player2.getName() + " played " +
-               p2_card.toString() + ". ";
+    turn = player1.getName() + " played " + p1_card.toString() + " " + player2.getName() + " played " +
+           p2_card.toString() + ". ";
+    while (true) {
         if (p1_card.winRound(p2_card) == RoundResult::Win) {
             player1.addNumCardsWon(player1.cardsOnTableCount(), player2.cardsOnTableCount());
             cleanTables();
             turn += player1.getName() + " wins.";
-            numberOfRounds++;
+            this->wins[0]++;
+            break;
         } else if (p1_card.winRound(p2_card) == RoundResult::Loss) {
             player2.addNumCardsWon(player1.cardsOnTableCount(), player2.cardsOnTableCount());
             cleanTables();
             turn += player2.getName() + " wins.";
-            numberOfRounds++;
-        } else { // tie
-            turn += "Draw.";
+            this->wins[1]++;
+            break;
+        } else { //tie
+            turn += "Draw. ";
             // draw another card from each player's
             player1.getCardOnTable();
             player2.getCardOnTable();
+            p1_card = player1.getCardOnTable();
+            p2_card = player2.getCardOnTable();
+            countDraws++;
+            turn += player1.getName() + " played " + p1_card.toString() + " " + player2.getName() + " played " +
+                    p2_card.toString() + ". ";
+            if (p1_card.winRound(p2_card) != RoundResult::Tie) { // a winner is found
+                if (p1_card.winRound(p2_card) == RoundResult::Win) {
+                    player1.addNumCardsWon(player1.cardsOnTableCount(), player2.cardsOnTableCount());
+                    cleanTables();
+                    this->wins[0]++;
+                    turn += player1.getName() + " wins.";
+                } else { // p1_drawn.winRound(p2_drawn) == RoundResult::Loss
+                    player2.addNumCardsWon(player1.cardsOnTableCount(), player2.cardsOnTableCount());
+                    cleanTables();
+                    turn += player2.getName() + " wins.";
+                    this->wins[1]++;
+                }
+                break;
+            }
         }
-    } while (p1_card.winRound(p2_card) == RoundResult::Tie);
+        if (p1_card.winRound(p2_card) != RoundResult::Tie) break; // a winner is found
+    }
     turnsLog.emplace_back(turn);
+    countRounds++;
 }
+
 
 void Game::printLastTurn() {
     if (turnsLog.empty()) {
@@ -96,7 +123,6 @@ void Game::playAll() {
             isGameFinished = true;
         }
     }
-
     // Determine the winner
     if (player1.cardesTaken() > player2.cardesTaken()) {
         winner = player1.getName();
@@ -124,20 +150,53 @@ void Game::printLog() {
     }
 }
 
-void Game::printStats() {}
+void Game::printStats() {
+    if (countRounds == 0) {
+        cout << "No games played yet." << endl;
+        return;
+    }
+    cout << "Number of rounds played: " << countRounds << endl;
+    cout << "Number of draws: " << countDraws << endl;
+    cout << "Number of cards in player 1's stack: " << player1.stacksize() << endl;
+    cout << "Number of cards in player 2's stack: " << player2.stacksize() << endl;
+    cout << "Number of cards taken by " << player1.getName() << ": " << player1.cardesTaken() << endl;
+    cout << "Number of cards taken by " << player2.getName() << ": " << player2.cardesTaken() << endl;
+
+    double player1WinRate = (double) wins[0] / (double) countRounds;
+    double player2WinRate = (double) wins[1] / (double) countRounds;
+    cout << "Win rate for " << player1.getName() << ": " << player1WinRate * 100 << "%" << endl;
+    cout << "Win rate for " << player2.getName() << ": " << player2WinRate * 100 << "%" << endl;
+
+    if (winner.empty()) {
+        cout << "No winner yet." << endl;
+    } else {
+        cout << "The winner is: " << winner << endl;
+    }
+}
 
 void Game::cleanTables() {
     player1.removeAllCardsFromTable();
     player2.removeAllCardsFromTable();
 }
 
-int main() {
-    Player p1("Noa");
-    Player p2("Boaz");
-    Game game(p1, p2);
-    for (int i = 0; i <= 23; i++) {
-        game.playTurn();
-        game.printLastTurn();
+bool Game::gameIsOver() {
+    if (player1.cardesTaken() + player2.cardesTaken() == 52) {
+        if (player1.cardesTaken() > player2.cardesTaken()) {
+            winner = player1.getName();
+        } else if (player2.cardesTaken() > player1.cardesTaken()) {
+            winner = player2.getName();
+        } else winner = "Draw. No winner.";
+        player1.setCurrentlyPlaying(false);
+        player2.setCurrentlyPlaying(false);
+        return true;
     }
-
+    return false;
 }
+
+//int main() {
+//    Player p1("Noa");
+//    Player p2("Boaz");
+//    Game game(p1, p2);
+//    game.playAll();
+//    game.printStats();
+//}
