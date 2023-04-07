@@ -5,24 +5,23 @@
 #include <string>
 
 namespace ariel {
+
     enum class RoundResult {
         Win,
         Loss,
         Tie
     };
 
+    // A Card represents a playing card in a standard deck of 52 cards.
+    // It has a number and a shape.
     class Card {
-        int number;  //{"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
-        std::string shape; //{"Hearts", "Diamonds", "Clubs", "Spades"}
+
+        int number;  // The number of the card, from 1 (Ace) to 13 (King)
+        std::string shape; // Hearts, Diamonds, Clubs, Spades
 
     public:
-        Card();
 
         Card(int card_number, const std::string &card_shape);
-
-        std::string getShape() const;
-
-        int getNumber() const;
 
         RoundResult winRound(const Card &other) const;
 

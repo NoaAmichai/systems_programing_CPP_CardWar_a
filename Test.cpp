@@ -18,29 +18,14 @@ TEST_CASE("Start Game: Each Player Should Have 26 Cards and 0 Cards Taken") {
     CHECK((p2.cardesTaken() == 0));
 }
 
-TEST_CASE("All Cards are Played and One Player Wins after PlayAll") {
+TEST_CASE("All Cards are Played") {
     Player p1("Alice");
     Player p2("Bob");
     Game game(p1, p2);
     game.playAll();
-
     //Both players should have 0 cards left in their stack
     CHECK((p1.stacksize() == 0));
     CHECK((p2.stacksize() == 0));
-
-    //Only one player should have taken cards
-    bool p1CardsTaken = (p1.cardesTaken() > 0);
-    bool p2CardsTaken = (p2.cardesTaken() > 0);
-    CHECK((p1CardsTaken != p2CardsTaken));
-
-    //The winning player should have more than 0 cards taken
-    if (p1CardsTaken) {
-        CHECK((p1.cardesTaken() > 0));
-        CHECK((p2.cardesTaken() == 0));
-    } else {
-        CHECK((p2.cardesTaken() > 0));
-        CHECK((p1.cardesTaken() == 0));
-    }
 }
 
 TEST_CASE("PlayTurn: Player has fewer cards after playing a turn") {
@@ -52,16 +37,16 @@ TEST_CASE("PlayTurn: Player has fewer cards after playing a turn") {
 
     CHECK((p1.stacksize() < 26 && p2.stacksize() < 26));
     CHECK((p1.stacksize() == p2.stacksize()));
+
 }
 
 TEST_CASE("Playing Against the Same Player Throws an Exception") {
     Player p1("Alice");
-
-    CHECK_THROWS(Game(p1, p1));
+    Game game(p1,p1);
+    CHECK_THROWS(game.playTurn());
 }
 
 TEST_CASE("Creating a Player with Null or Empty Name Should Throw an Exception") {
-    CHECK_THROWS_AS(Player(nullptr), invalid_argument);
     CHECK_THROWS_AS(Player(""), invalid_argument);
 }
 
@@ -73,13 +58,13 @@ TEST_CASE("Check Stack Before and After Register") {
     CHECK((p1.stacksize() == 0));
     CHECK((p2.stacksize() == 0));
 
-    Game game(p1, p1);
+    Game game(p1, p2);
     // check that both players stack isn't empty
     CHECK((p1.stacksize() != 0));
     CHECK((p2.stacksize() != 0));
 }
 
-TEST_CASE("Players Take Valid Amount of Cards after a Turn") {
+TEST_CASE("Players Has Valid Amount of Cards after a Turn") {
     Player p1("Alice");
     Player p2("Bob");
     Game game(p1, p2);

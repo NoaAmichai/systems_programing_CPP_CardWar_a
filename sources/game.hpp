@@ -14,9 +14,10 @@ namespace ariel {
         std::string winner;
         std::vector<Card> deck;
         std::vector<std::string> turnsLog;
-        std::vector<int> wins; // counter for each player
+        std::vector<int> wins; // count wins for each player
         int countRounds;
         int countDraws;
+        bool gameOver;
 
     public:
         Game(Player &firstPlayer, Player &secondPlayer);
@@ -27,13 +28,13 @@ namespace ariel {
 
         void playAll();
 
-        void printWiner();
+        void printWiner() const;
 
-        void printLog();
+        void printLog() const;
 
         void printStats();
 
-        void cleanTables();
+        void resetTables();
 
         bool gameIsOver();
     };

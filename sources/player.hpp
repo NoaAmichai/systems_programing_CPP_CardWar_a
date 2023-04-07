@@ -40,6 +40,7 @@ namespace ariel {
 
         bool isCurrentlyPlaying() const;
 
+        void clearStack();
     };
 }
 #endif
