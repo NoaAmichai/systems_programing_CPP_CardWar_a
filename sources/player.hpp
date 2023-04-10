@@ -1,8 +1,5 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#pragma once
 
-#include <string>
-#include <iostream>
 #include <vector>
 #include "card.hpp"
 
@@ -43,4 +40,3 @@ namespace ariel {
         void clearStack();
     };
 }
-#endif

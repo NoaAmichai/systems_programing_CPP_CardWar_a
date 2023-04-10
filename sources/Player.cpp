@@ -1,5 +1,4 @@
 #include "player.hpp"
-#include "card.hpp"
 
 using namespace std;
 using namespace ariel;

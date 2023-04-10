@@ -1,8 +1,6 @@
-#ifndef CARD_H
-#define CARD_H
+#pragma once
 
 #include <iostream>
-#include <string>
 
 namespace ariel {
 
@@ -29,5 +27,3 @@ namespace ariel {
 
     };
 }
-
-#endif

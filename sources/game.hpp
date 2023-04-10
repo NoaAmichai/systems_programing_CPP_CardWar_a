@@ -1,9 +1,6 @@
-#ifndef GAME_HPP
-#define GAME_HPP
+#pragma once
 
-#include <string>
 #include "player.hpp"
-
 
 namespace ariel {
     class Game {
@@ -39,5 +36,3 @@ namespace ariel {
         bool gameIsOver();
     };
 }
-
-#endif

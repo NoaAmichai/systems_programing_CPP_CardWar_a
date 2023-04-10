@@ -1,7 +1,4 @@
 #include "game.hpp"
-#include "card.hpp"
-#include <iostream>
-#include <vector>
 #include <algorithm>
 #include <random>
 #include <set>
@@ -85,8 +82,8 @@ void Game::playTurn() {
             countDraws++;
             if (player1.stacksize() < 2) { //the game ended in the middle of a tie
                 gameOver = true;
-                player1.addNumCardsWon(player1.cardsOnTableCount(), 0);
-                player2.addNumCardsWon(player2.cardsOnTableCount(), 0);
+                player1.addNumCardsWon(player1.cardsOnTableCount(), player1.stacksize());
+                player2.addNumCardsWon(player2.cardsOnTableCount(), player2.stacksize());
                 player1.clearStack();
                 player2.clearStack();
                 break;

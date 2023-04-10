@@ -1,7 +1,4 @@
 #include "card.hpp"
-#include <iostream>
-#include <string>
-#include <stdexcept>
 #include <set>
 
 using namespace std;
